@@ -217,11 +217,7 @@
 
     <!-- Layer 4 -->
     <section id="layer-4" class="hidden flex flex-col items-center space-y-8 w-full">
-      <!-- Polaroid Photo Frame -->
-      <div id="polaroid-container" class="opacity-0 scale-95 transition-all duration-1000 bg-white p-4 pb-8 shadow-2xl rounded-sm border border-earth-sand rotate-[-2deg] max-w-xs hover:rotate-0 transition-transform duration-300 z-10">
-        <img src="couple_line_art.png" alt="Zharfan & Bunga" class="w-60 h-60 object-cover rounded-sm mb-4 filter sepia-[0.05] contrast-[0.98]">
-        <p class="font-serif text-earth-charcoal text-base text-center tracking-wide italic">Bunga & Zharfan &hearts;</p>
-      </div>
+
 
       <h2 id="text-layer-4" class="font-serif text-3xl md:text-4xl font-medium leading-snug tracking-wide max-w-md min-h-[96px]">
         <!-- Typewriter content loaded in script -->
@@ -377,12 +373,7 @@
             </svg>
           `;
           
-          // Animate polaroid entry
-          const polaroid = document.getElementById('polaroid-container');
-          setTimeout(() => {
-            polaroid.classList.remove('opacity-0', 'scale-95');
-            polaroid.classList.add('opacity-100', 'scale-100');
-          }, 200);
+
 
           // Animate typewriter success message
           setTimeout(() => {
