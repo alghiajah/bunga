@@ -104,100 +104,7 @@
       animation: marquee 16s linear infinite;
     }
 
-    /* Interactive Envelope Card styling */
-    .envelope-wrapper {
-      position: relative;
-      width: 290px;
-      height: 180px;
-      background-color: #F5EFEB; /* sand */
-      border: 1.5px solid rgba(42, 43, 42, 0.08);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.04);
-      border-radius: 6px;
-      perspective: 1000px;
-      cursor: pointer;
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .envelope-wrapper:hover {
-      transform: translateY(-5px) scale(1.02);
-    }
-    .envelope-flap {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-left: 145px solid transparent;
-      border-right: 145px solid transparent;
-      border-top: 95px solid #E4DAD0; /* flap color - darker sand */
-      transform-origin: top;
-      transition: transform 0.5s ease, z-index 0.5s ease;
-      z-index: 3;
-    }
-    .envelope-wrapper.open .envelope-flap {
-      transform: rotateX(180deg);
-      z-index: 1;
-    }
-    .envelope-paper {
-      position: absolute;
-      bottom: 5px;
-      left: 15px;
-      width: 260px;
-      height: 165px;
-      background: #FFFFFF;
-      border-radius: 4px;
-      padding: 18px 12px;
-      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 2;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid rgba(0,0,0,0.04);
-    }
-    .envelope-wrapper.open .envelope-paper {
-      transform: translateY(-120px);
-      height: 250px;
-      z-index: 4;
-    }
-    .envelope-front {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      border-left: 145px solid transparent;
-      border-right: 145px solid transparent;
-      border-bottom: 95px solid #F5EFEB;
-      z-index: 3;
-      border-radius: 0 0 6px 6px;
-      pointer-events: none;
-    }
-    .envelope-seal {
-      position: absolute;
-      top: 85px;
-      left: 145px;
-      transform: translate(-50%, -50%);
-      width: 36px;
-      height: 36px;
-      background-color: #8EA38C; /* elegant sage green for the seal */
-      border-radius: 50%;
-      z-index: 5;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .envelope-wrapper:hover .envelope-seal {
-      transform: translate(-50%, -50%) scale(1.1) rotate(10deg);
-    }
-    .envelope-wrapper.open .envelope-seal {
-      transform: translate(-50%, -50%) scale(0);
-      pointer-events: none;
-    }
+
   </style>
 </head>
 <body class="bg-earth-cream text-earth-charcoal font-sans min-h-screen flex items-center justify-center overflow-hidden relative selection:bg-earth-sage/20">
@@ -280,27 +187,11 @@
     </section>
 
     <!-- Layer 2 -->
-    <section id="layer-2" class="hidden flex flex-col items-center space-y-8 w-full">
-      <!-- Envelope wrapper -->
-      <div id="envelope" class="envelope-wrapper">
-        <div class="envelope-flap"></div>
-        <div class="envelope-paper">
-          <p id="text-layer-2" class="font-serif text-xs md:text-[13px] text-earth-charcoal leading-relaxed text-center font-normal px-2 max-h-full overflow-y-auto">
-            <!-- Typewriter content loaded after envelope click -->
-          </p>
-        </div>
-        <div class="envelope-front"></div>
-        <div class="envelope-seal">
-          <svg class="w-4 h-4 text-earth-cream" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-          </svg>
-        </div>
-      </div>
-      
-      <p id="envelope-instruction" class="text-[9px] text-earth-charcoal/50 animate-pulse uppercase tracking-widest select-none pointer-events-none mt-2">
-        Klik untuk membuka surat
+    <section id="layer-2" class="hidden flex flex-col items-center space-y-10 w-full">
+      <p id="text-layer-2" class="font-serif text-2xl md:text-3xl font-medium leading-relaxed tracking-wide max-w-md min-h-[140px]">
+        <!-- Typewriter content loaded in script -->
       </p>
-
+      
       <button id="btn-layer-2" onclick="triggerNextLayer(2, 3)" class="opacity-0 translate-y-2 transition-all duration-700 px-8 py-3.5 bg-earth-charcoal text-earth-cream font-medium rounded-full shadow-sm hover:bg-black hover:-translate-y-0.5 active:translate-y-0 tracking-wide text-sm">
         Terus?
       </button>
@@ -465,22 +356,11 @@
         
         // Trigger page-specific scripts on activation
         if (nextId === 2) {
-          const envelope = document.getElementById('envelope');
-          const envelopeInstruct = document.getElementById('envelope-instruction');
-          
-          const openEnvelopeHandler = () => {
-            envelope.classList.add('open');
-            envelopeInstruct.classList.add('hidden');
-            envelope.removeEventListener('click', openEnvelopeHandler);
-            
-            // Start writing letter after open transition finishes
-            setTimeout(() => {
-              typeText(document.getElementById('text-layer-2'), layerTexts[2], 25, () => {
-                showElement(document.getElementById('btn-layer-2'));
-              });
-            }, 700);
-          };
-          envelope.addEventListener('click', openEnvelopeHandler);
+          setTimeout(() => {
+            typeText(document.getElementById('text-layer-2'), layerTexts[2], 30, () => {
+              showElement(document.getElementById('btn-layer-2'));
+            });
+          }, 300);
         }
         else if (nextId === 3) {
           typeText(document.getElementById('text-layer-3'), layerTexts[3], 50, () => {
