@@ -1,0 +1,9 @@
+# Ignore folders and local files that are not needed in GitHub
+.DS_Store
+Thumbs.db
+*.log
+.gemini/
+.agents/
+.vscode/
+.idea/
+node_modules/

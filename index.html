@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untuk Bunga</title>
+  <!-- SEO & Fonts -->
+  <meta name="description" content="Pesan interaktif spesial untuk Bunga.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            earth: {
+              cream: '#FDFBF7',
+              sand: '#F5EFEB',
+              sage: '#8EA38C',
+              sagedark: '#768772',
+              charcoal: '#2A2B2A',
+              clay: '#C69B9B',
+              claydark: '#B58888',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Smooth transitions */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .fade-out {
+      opacity: 1;
+      transform: translateY(0);
+      animation: fadeOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateY(-16px);
+      }
+    }
+
+    /* Floating illustration */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(3deg);
+      }
+    }
+    .animate-float {
+      animation: float 8s ease-in-out infinite;
+    }
+
+    /* Background noise grain */
+    .bg-grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.04;
+    }
+
+    /* Soundwave bars animation */
+    .wave-bar {
+      transition: height 0.25s ease;
+      height: 4px;
+    }
+    .playing .wave-bar:nth-child(1) { animation: wave 1s ease-in-out infinite alternate; }
+    .playing .wave-bar:nth-child(2) { animation: wave 0.7s ease-in-out infinite alternate; }
+    .playing .wave-bar:nth-child(3) { animation: wave 1.3s ease-in-out infinite alternate; }
+    .playing .wave-bar:nth-child(4) { animation: wave 0.9s ease-in-out infinite alternate; }
+
+    @keyframes wave {
+      0% { height: 4px; }
+      100% { height: 18px; }
+    }
+
+    /* Marquee animation */
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 16s linear infinite;
+    }
+
+    /* Interactive Envelope Card styling */
+    .envelope-wrapper {
+      position: relative;
+      width: 290px;
+      height: 180px;
+      background-color: #F5EFEB; /* sand */
+      border: 1.5px solid rgba(42, 43, 42, 0.08);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.04);
+      border-radius: 6px;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .envelope-wrapper:hover {
+      transform: translateY(-5px) scale(1.02);
+    }
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 145px solid transparent;
+      border-right: 145px solid transparent;
+      border-top: 95px solid #E4DAD0; /* flap color - darker sand */
+      transform-origin: top;
+      transition: transform 0.5s ease, z-index 0.5s ease;
+      z-index: 3;
+    }
+    .envelope-wrapper.open .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+    .envelope-paper {
+      position: absolute;
+      bottom: 5px;
+      left: 15px;
+      width: 260px;
+      height: 165px;
+      background: #FFFFFF;
+      border-radius: 4px;
+      padding: 18px 12px;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 2;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .envelope-wrapper.open .envelope-paper {
+      transform: translateY(-120px);
+      height: 250px;
+      z-index: 4;
+    }
+    .envelope-front {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border-left: 145px solid transparent;
+      border-right: 145px solid transparent;
+      border-bottom: 95px solid #F5EFEB;
+      z-index: 3;
+      border-radius: 0 0 6px 6px;
+      pointer-events: none;
+    }
+    .envelope-seal {
+      position: absolute;
+      top: 85px;
+      left: 145px;
+      transform: translate(-50%, -50%);
+      width: 36px;
+      height: 36px;
+      background-color: #8EA38C; /* elegant sage green for the seal */
+      border-radius: 50%;
+      z-index: 5;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .envelope-wrapper:hover .envelope-seal {
+      transform: translate(-50%, -50%) scale(1.1) rotate(10deg);
+    }
+    .envelope-wrapper.open .envelope-seal {
+      transform: translate(-50%, -50%) scale(0);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-earth-cream text-earth-charcoal font-sans min-h-screen flex items-center justify-center overflow-hidden relative selection:bg-earth-sage/20">
+
+  <!-- Audio Element -->
+  <audio id="bg-audio" loop src="Hindia - Bayangkan Jika Kita Tidak Menyerah Official Lyric Video.mp3"></audio>
+
+  <!-- Background Canvases -->
+  <canvas id="cursor-canvas" class="absolute inset-0 pointer-events-none z-40"></canvas>
+  <canvas id="petals-canvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Noise Overlay -->
+  <div class="absolute inset-0 bg-grain pointer-events-none z-50"></div>
+
+  <!-- Ambient Light Effects (High-end UI Design) -->
+  <div class="absolute top-[-20%] left-[-20%] w-[80vw] h-[80vw] rounded-full bg-[#EADCC9] filter blur-[150px] opacity-35 pointer-events-none select-none z-0"></div>
+  <div class="absolute bottom-[-20%] right-[-20%] w-[90vw] h-[90vw] rounded-full bg-[#D6E0D4] filter blur-[180px] opacity-35 pointer-events-none select-none z-0"></div>
+
+  <!-- Floating Music Player Pill -->
+  <div id="music-player" class="fixed top-6 right-6 z-40 bg-white/30 backdrop-blur-md border border-white/40 rounded-full px-4 py-2 flex items-center gap-3.5 shadow-lg group hover:px-5 transition-all duration-300">
+    <!-- Sound Waves animation -->
+    <div id="sound-waves" class="flex items-end justify-center gap-0.5 w-6 h-5 cursor-pointer">
+      <div class="w-1 bg-earth-sage h-2 rounded-full wave-bar"></div>
+      <div class="w-1 bg-earth-sage h-4 rounded-full wave-bar"></div>
+      <div class="w-1 bg-earth-sage h-1 rounded-full wave-bar"></div>
+      <div class="w-1 bg-earth-sage h-3 rounded-full wave-bar"></div>
+    </div>
+    
+    <!-- Scrolling Track Title -->
+    <div class="flex flex-col select-none overflow-hidden w-28 md:w-36">
+      <div class="relative flex overflow-x-hidden">
+        <div class="animate-marquee whitespace-nowrap">
+          <span class="text-[10px] font-semibold tracking-wide uppercase text-earth-charcoal/80 mr-4">Hindia — Bayangkan Jika Kita Tidak Menyerah</span>
+          <span class="text-[10px] font-semibold tracking-wide uppercase text-earth-charcoal/80 mr-4">Hindia — Bayangkan Jika Kita Tidak Menyerah</span>
+        </div>
+      </div>
+      <span class="text-[7.5px] text-earth-charcoal/40 tracking-widest font-semibold">BACKGROUND MUSIC</span>
+    </div>
+
+    <!-- Volume Adjuster Slider -->
+    <div class="flex items-center gap-1.5 w-0 overflow-hidden group-hover:w-20 transition-all duration-500">
+      <svg id="volume-icon" class="w-3.5 h-3.5 text-earth-charcoal/70" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </svg>
+      <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.70" class="w-12 h-0.5 bg-earth-charcoal/20 rounded-lg appearance-none cursor-pointer accent-earth-sage">
+    </div>
+
+    <!-- Play/Pause Button -->
+    <button id="btn-play-pause" class="w-7 h-7 bg-earth-charcoal text-earth-cream rounded-full flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm">
+      <svg id="icon-pause" class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+      <svg id="icon-play" class="w-3 h-3 hidden" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Main Container -->
+  <main class="w-full max-w-lg px-8 py-16 flex flex-col items-center justify-center text-center z-10 select-none">
+    
+    <!-- Fine-art icon at the top -->
+    <div id="illustration-container" class="mb-10 opacity-70">
+      <!-- Minimalist elegant line-art leaf/flower -->
+      <svg class="w-16 h-16 text-earth-charcoal/40 animate-float" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 90 C50 65, 40 40, 20 30 C35 30, 45 45, 50 65 C55 45, 65 30, 80 30 C60 40, 50 65, 50 90 Z" />
+        <path d="M50 90 C50 90, 50 10, 50 10" stroke-dasharray="2 3" stroke="currentColor" />
+        <circle cx="50" cy="15" r="5" class="fill-earth-sage/30 stroke-earth-sage" />
+      </svg>
+    </div>
+
+    <!-- Layer 1 -->
+    <section id="layer-1" class="fade-in flex flex-col items-center space-y-10 w-full">
+      <h1 id="text-layer-1" class="font-serif text-3xl md:text-4xl font-medium leading-snug tracking-wide max-w-md min-h-[96px]">
+        <!-- Typewriter content loaded in script -->
+      </h1>
+      <button id="btn-layer-1" onclick="triggerNextLayer(1, 2)" class="opacity-0 translate-y-2 transition-all duration-700 px-8 py-3.5 bg-earth-charcoal text-earth-cream font-medium rounded-full shadow-sm hover:bg-black hover:-translate-y-0.5 active:translate-y-0 tracking-wide text-sm">
+        Apa tuh?
+      </button>
+    </section>
+
+    <!-- Layer 2 -->
+    <section id="layer-2" class="hidden flex flex-col items-center space-y-8 w-full">
+      <!-- Envelope wrapper -->
+      <div id="envelope" class="envelope-wrapper">
+        <div class="envelope-flap"></div>
+        <div class="envelope-paper">
+          <p id="text-layer-2" class="font-serif text-xs md:text-[13px] text-earth-charcoal leading-relaxed text-center font-normal px-2 max-h-full overflow-y-auto">
+            <!-- Typewriter content loaded after envelope click -->
+          </p>
+        </div>
+        <div class="envelope-front"></div>
+        <div class="envelope-seal">
+          <svg class="w-4 h-4 text-earth-cream" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+      
+      <p id="envelope-instruction" class="text-[9px] text-earth-charcoal/50 animate-pulse uppercase tracking-widest select-none pointer-events-none mt-2">
+        Klik untuk membuka surat
+      </p>
+
+      <button id="btn-layer-2" onclick="triggerNextLayer(2, 3)" class="opacity-0 translate-y-2 transition-all duration-700 px-8 py-3.5 bg-earth-charcoal text-earth-cream font-medium rounded-full shadow-sm hover:bg-black hover:-translate-y-0.5 active:translate-y-0 tracking-wide text-sm">
+        Terus?
+      </button>
+    </section>
+
+    <!-- Layer 3 -->
+    <section id="layer-3" class="hidden flex flex-col items-center space-y-10 w-full relative">
+      <h2 id="text-layer-3" class="font-serif text-3xl md:text-4xl font-medium leading-snug tracking-wide max-w-md min-h-[96px]">
+        <!-- Typewriter content loaded in script -->
+      </h2>
+      
+      <!-- Buttons container -->
+      <div id="btn-container-3" class="opacity-0 translate-y-2 transition-all duration-700 flex flex-row items-center justify-center gap-6 w-full pt-4 min-h-[64px]">
+        <button id="btn-yes" onclick="triggerNextLayer(3, 4)" class="px-8 py-3.5 bg-earth-sage text-white font-medium rounded-full shadow-sm hover:bg-earth-sagedark hover:-translate-y-0.5 active:translate-y-0 hover:scale-105 active:scale-95 transition-all duration-300 tracking-wide text-sm animate-pulse">
+          Iya, mau
+        </button>
+        
+        <button id="btn-no" class="px-8 py-3.5 bg-earth-clay text-white font-medium rounded-full shadow-sm hover:bg-earth-claydark transition-all duration-300 tracking-wide text-sm">
+          Nggak
+        </button>
+      </div>
+    </section>
+
+    <!-- Layer 4 -->
+    <section id="layer-4" class="hidden flex flex-col items-center space-y-8 w-full">
+      <!-- Polaroid Photo Frame -->
+      <div id="polaroid-container" class="opacity-0 scale-95 transition-all duration-1000 bg-white p-4 pb-8 shadow-2xl rounded-sm border border-earth-sand rotate-[-2deg] max-w-xs hover:rotate-0 transition-transform duration-300 z-10">
+        <img src="couple_line_art.png" alt="Zharfan & Bunga" class="w-60 h-60 object-cover rounded-sm mb-4 filter sepia-[0.05] contrast-[0.98]">
+        <p class="font-serif text-earth-charcoal text-base text-center tracking-wide italic">Bunga & Zharfan &hearts;</p>
+      </div>
+
+      <h2 id="text-layer-4" class="font-serif text-3xl md:text-4xl font-medium leading-snug tracking-wide max-w-md min-h-[96px]">
+        <!-- Typewriter content loaded in script -->
+      </h2>
+      
+      <footer id="footer-layer-4" class="opacity-0 transition-all duration-1000 text-xs tracking-widest text-earth-charcoal/50 uppercase pt-4 font-light">
+        From: Zharfan
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    // Configured texts for typing effect
+    const layerTexts = {
+      1: "Hai Bunga, ada yang mau aku omongin nih...",
+      2: "Makasih ya udah selalu nemenin dan jadi bagian penting buat aku akhir-akhir ini. Mungkin ini terlalu cepat, karna kita baru deket beberapa hari, tapi aku harap kamu bisa menerima aku...",
+      3: "So... Will you be my girlfriend?",
+      4: "Hehe, thank you. I promise to make you happy."
+    };
+
+    // --- Audio System ---
+    const bgAudio = document.getElementById('bg-audio');
+    const btnPlayPause = document.getElementById('btn-play-pause');
+    const soundWaves = document.getElementById('sound-waves');
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeIcon = document.getElementById('volume-icon');
+
+    let isMusicInitialized = false;
+
+    // Set initial audio volume
+    bgAudio.volume = 0.70;
+
+    function initMusic() {
+      if (isMusicInitialized) return;
+      bgAudio.play().then(() => {
+        isMusicInitialized = true;
+        soundWaves.classList.add('playing');
+        iconPause.classList.remove('hidden');
+        iconPlay.classList.add('hidden');
+      }).catch((err) => {
+        console.log("Audio play blocked. User interaction required to start music context.", err);
+      });
+    }
+
+    function togglePlay() {
+      if (bgAudio.paused) {
+        bgAudio.play();
+        soundWaves.classList.add('playing');
+        iconPause.classList.remove('hidden');
+        iconPlay.classList.add('hidden');
+      } else {
+        bgAudio.pause();
+        soundWaves.classList.remove('playing');
+        iconPause.classList.add('hidden');
+        iconPlay.classList.remove('hidden');
+      }
+    }
+
+    // Bind event listeners for play controls
+    btnPlayPause.addEventListener('click', togglePlay);
+    soundWaves.addEventListener('click', togglePlay);
+
+    // Volume controls
+    volumeSlider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      bgAudio.volume = val;
+      if (val === 0) {
+        volumeIcon.innerHTML = `<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>`;
+      } else if (val < 0.4) {
+        volumeIcon.innerHTML = `<path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"/>`;
+      } else {
+        volumeIcon.innerHTML = `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>`;
+      }
+    });
+
+    // --- Typewriter Effect ---
+    function typeText(element, text, speed = 40, callback) {
+      element.innerHTML = '';
+      element.classList.remove('hidden');
+      let i = 0;
+      
+      const cursor = document.createElement('span');
+      cursor.className = 'inline-block w-1 h-5 md:h-6 bg-earth-charcoal/80 ml-1 animate-pulse';
+      element.appendChild(cursor);
+      
+      function typing() {
+        if (i < text.length) {
+          cursor.before(text.charAt(i));
+          i++;
+          setTimeout(typing, speed + Math.random() * 15);
+        } else {
+          cursor.remove();
+          if (callback) callback();
+        }
+      }
+      typing();
+    }
+
+    function showElement(el) {
+      el.classList.remove('opacity-0', 'translate-y-2');
+    }
+
+    // Trigger typing on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        typeText(document.getElementById('text-layer-1'), layerTexts[1], 45, () => {
+          showElement(document.getElementById('btn-layer-1'));
+        });
+      }, 700);
+    });
+
+    // --- Multi-Layer Transitions ---
+    function triggerNextLayer(currentId, nextId) {
+      // Auto-start music if not initialized (browser audio policy requires interaction)
+      initMusic();
+      
+      const currentEl = document.getElementById(`layer-${currentId}`);
+      const nextEl = document.getElementById(`layer-${nextId}`);
+      
+      currentEl.classList.remove('fade-in');
+      currentEl.classList.add('fade-out');
+      
+      setTimeout(() => {
+        currentEl.classList.add('hidden');
+        currentEl.classList.remove('fade-out');
+        
+        nextEl.classList.remove('hidden');
+        nextEl.classList.add('fade-in');
+        
+        // Trigger page-specific scripts on activation
+        if (nextId === 2) {
+          const envelope = document.getElementById('envelope');
+          const envelopeInstruct = document.getElementById('envelope-instruction');
+          
+          const openEnvelopeHandler = () => {
+            envelope.classList.add('open');
+            envelopeInstruct.classList.add('hidden');
+            envelope.removeEventListener('click', openEnvelopeHandler);
+            
+            // Start writing letter after open transition finishes
+            setTimeout(() => {
+              typeText(document.getElementById('text-layer-2'), layerTexts[2], 25, () => {
+                showElement(document.getElementById('btn-layer-2'));
+              });
+            }, 700);
+          };
+          envelope.addEventListener('click', openEnvelopeHandler);
+        }
+        else if (nextId === 3) {
+          typeText(document.getElementById('text-layer-3'), layerTexts[3], 50, () => {
+            showElement(document.getElementById('btn-container-3'));
+          });
+        }
+        else if (nextId === 4) {
+          // Change general design ornaments
+          const illuContainer = document.getElementById('illustration-container');
+          illuContainer.innerHTML = `
+            <svg class="w-16 h-16 text-earth-sage/60 animate-float" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="43" cy="50" r="18" />
+              <circle cx="57" cy="50" r="18" />
+            </svg>
+          `;
+          
+          // Animate polaroid entry
+          const polaroid = document.getElementById('polaroid-container');
+          setTimeout(() => {
+            polaroid.classList.remove('opacity-0', 'scale-95');
+            polaroid.classList.add('opacity-100', 'scale-100');
+          }, 200);
+
+          // Animate typewriter success message
+          setTimeout(() => {
+            typeText(document.getElementById('text-layer-4'), layerTexts[4], 45, () => {
+              const footer = document.getElementById('footer-layer-4');
+              footer.classList.remove('opacity-0');
+              footer.classList.add('opacity-100');
+            });
+          }, 1100);
+
+          // Start full-screen falling petals
+          initPetals();
+          animatePetals();
+        }
+      }, 550);
+    }
+
+    // --- Cursor Trail Particles System ---
+    const cursorCanvas = document.getElementById('cursor-canvas');
+    const ctxCursor = cursorCanvas.getContext('2d');
+    let cursorParticles = [];
+
+    function resizeCursorCanvas() {
+      cursorCanvas.width = window.innerWidth;
+      cursorCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCursorCanvas);
+    resizeCursorCanvas();
+
+    class CursorParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.012 + 0.008;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= this.decay;
+      }
+      draw() {
+        ctxCursor.save();
+        ctxCursor.globalAlpha = this.alpha;
+        ctxCursor.fillStyle = '#C69B9B'; // clay
+        ctxCursor.shadowBlur = 3;
+        ctxCursor.shadowColor = '#C69B9B';
+        ctxCursor.beginPath();
+        ctxCursor.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctxCursor.fill();
+        ctxCursor.restore();
+      }
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      for (let i = 0; i < 2; i++) {
+        cursorParticles.push(new CursorParticle(e.clientX, e.clientY));
+      }
+    });
+
+    function animateCursorParticles() {
+      ctxCursor.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+      cursorParticles = cursorParticles.filter(p => p.alpha > 0);
+      cursorParticles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateCursorParticles);
+    }
+    animateCursorParticles();
+
+    // --- Falling Flower Petals System (Layer 4) ---
+    const petalsCanvas = document.getElementById('petals-canvas');
+    const ctxPetals = petalsCanvas.getContext('2d');
+    let petals = [];
+
+    function resizePetalsCanvas() {
+      petalsCanvas.width = window.innerWidth;
+      petalsCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizePetalsCanvas);
+
+    class Petal {
+      constructor() {
+        this.x = Math.random() * petalsCanvas.width;
+        this.y = Math.random() * -petalsCanvas.height - 20;
+        this.size = Math.random() * 8 + 6;
+        this.speedX = Math.random() * 1.2 - 0.3;
+        this.speedY = Math.random() * 1.5 + 0.8;
+        this.angle = Math.random() * 360;
+        this.spin = Math.random() * 1.5 - 0.75;
+        this.color = Math.random() > 0.5 ? 'rgba(142, 163, 140, 0.35)' : 'rgba(214, 224, 212, 0.45)';
+      }
+      update() {
+        this.x += this.speedX + Math.sin(this.angle * Math.PI / 180) * 0.4;
+        this.y += this.speedY;
+        this.angle += this.spin;
+        if (this.y > petalsCanvas.height) {
+          this.y = -20;
+          this.x = Math.random() * petalsCanvas.width;
+        }
+      }
+      draw() {
+        ctxPetals.save();
+        ctxPetals.translate(this.x, this.y);
+        ctxPetals.rotate(this.angle * Math.PI / 180);
+        ctxPetals.fillStyle = this.color;
+        ctxPetals.beginPath();
+        ctxPetals.ellipse(0, 0, this.size, this.size / 2, 0, 0, 2 * Math.PI);
+        ctxPetals.fill();
+        ctxPetals.restore();
+      }
+    }
+
+    function initPetals() {
+      resizePetalsCanvas();
+      for (let i = 0; i < 35; i++) {
+        petals.push(new Petal());
+      }
+    }
+
+    function animatePetals() {
+      ctxPetals.clearRect(0, 0, petalsCanvas.width, petalsCanvas.height);
+      petals.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animatePetals);
+    }
+
+    // --- "Nggak" Button Fleeing Physics Logic (Layer 3) ---
+    const btnNo = document.getElementById('btn-no');
+
+    function escapeButton(event) {
+      if (event) event.preventDefault();
+
+      const padding = 35;
+      const rect = btnNo.getBoundingClientRect();
+      const btnW = rect.width;
+      const btnH = rect.height;
+
+      // Outer limits of the viewport
+      const xMax = window.innerWidth - btnW - padding;
+      const yMax = window.innerHeight - btnH - padding;
+
+      // Generate a new position
+      let newX = Math.random() * (xMax - padding) + padding;
+      let newY = Math.random() * (yMax - padding) + padding;
+
+      // Extract cursor coordinates
+      let clientX = event.clientX;
+      let clientY = event.clientY;
+
+      if (event.touches && event.touches[0]) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      }
+
+      if (clientX && clientY) {
+        // Calculate distance from cursor to candidate coordinates
+        const dist = Math.hypot(newX - clientX, newY - clientY);
+        // Force placement away from cursor if too close
+        if (dist < 220) {
+          newX = (clientX + 250) % xMax;
+          newY = (clientY + 250) % yMax;
+          if (newX < padding) newX = padding;
+          if (newY < padding) newY = padding;
+        }
+      }
+
+      // Add smooth transition properties dynamically
+      btnNo.style.position = 'fixed';
+      btnNo.style.transition = 'left 0.25s cubic-bezier(0.19, 1, 0.22, 1), top 0.25s cubic-bezier(0.19, 1, 0.22, 1)';
+      btnNo.style.left = `${newX}px`;
+      btnNo.style.top = `${newY}px`;
+      btnNo.style.zIndex = '9999';
+    }
+
+    // Escape bindings
+    btnNo.addEventListener('mouseover', escapeButton);
+    btnNo.addEventListener('touchstart', escapeButton);
+    btnNo.addEventListener('click', escapeButton);
+  </script>
+</body>
+</html>
